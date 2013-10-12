@@ -1,5 +1,7 @@
 <?php
 
+include __DIR__ . '/vendor/autoload.php';
+
 /**
  * Defines the root directory of the Drupal installation.
  */
