@@ -221,6 +221,12 @@ $this['_drupal_bootstrap_page_cache__plugins'] = $this->share(function () {
   foreach (variable_get('cache_backends', array()) as $include) {
     require_once DRUPAL_ROOT . '/' . $include;
   }
+});
+
+/**
+ * Actually serve the cached page.
+ */
+$this['_drupal_bootstrap_page_cache__serve'] = $this->share(function () {
   // Check for a cache mode force from settings.php.
   if (variable_get('page_cache_without_database')) {
     $cache_enabled = TRUE;
@@ -229,12 +235,6 @@ $this['_drupal_bootstrap_page_cache__plugins'] = $this->share(function () {
     drupal_bootstrap(DRUPAL_BOOTSTRAP_VARIABLES, FALSE);
     $cache_enabled = variable_get('cache');
   }
-});
-
-/**
- * Actually serve the cached page.
- */
-$this['_drupal_bootstrap_page_cache__serve'] = $this->share(function () {
   // If there is no session cookie and cache is enabled (or forced), try
   // to serve a cached page.
   if (!isset($_COOKIE[session_name()]) && $cache_enabled) {
