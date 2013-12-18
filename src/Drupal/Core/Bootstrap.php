@@ -4,6 +4,10 @@ namespace Drupal\Core;
 
 use Drupal\Bootstrap as BaseBootstrap;
 
+/**
+ * Class Bootstrap
+ * @package Drupal\Core
+ */
 class Bootstrap extends BaseBootstrap
 {
   /**

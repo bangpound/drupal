@@ -2040,6 +2040,8 @@ function drupal_anonymous_user() {
  * @param $new_phase
  *   A boolean, set to FALSE if calling drupal_bootstrap from inside a
  *   function called from drupal_bootstrap (recursion).
+ * @param $class
+ *   Class name of the Drupal Bootstrap container.
  *
  * @return
  *   The most recently completed phase.
