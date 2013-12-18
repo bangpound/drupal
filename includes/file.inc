@@ -470,8 +470,11 @@ function file_ensure_htaccess() {
  * @param $private
  *   FALSE indicates that $directory should be an open and public directory.
  *   The default is TRUE which indicates a private and protected directory.
+ * @param $force_overwrite
+ *   Set to TRUE to attempt to overwrite the existing .htaccess file if one is
+ *   already present. Defaults to FALSE.
  */
-function file_create_htaccess($directory, $private = TRUE) {
+function file_create_htaccess($directory, $private = TRUE, $force_overwrite = FALSE) {
   if (file_uri_scheme($directory)) {
     $directory = file_stream_wrapper_uri_normalize($directory);
   }
@@ -480,19 +483,12 @@ function file_create_htaccess($directory, $private = TRUE) {
   }
   $htaccess_path =  $directory . '/.htaccess';
 
-  if (file_exists($htaccess_path)) {
+  if (file_exists($htaccess_path) && !$force_overwrite) {
     // Short circuit if the .htaccess file already exists.
     return;
   }
 
-  if ($private) {
-    // Private .htaccess file.
-    $htaccess_lines = "SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006\nDeny from all\nOptions None\nOptions +FollowSymLinks";
-  }
-  else {
-    // Public .htaccess file.
-    $htaccess_lines = "SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006\nOptions None\nOptions +FollowSymLinks";
-  }
+  $htaccess_lines = file_htaccess_lines($private);
 
   // Write the .htaccess file.
   if (file_put_contents($htaccess_path, $htaccess_lines)) {
@@ -502,6 +498,45 @@ function file_create_htaccess($directory, $private = TRUE) {
     $variables = array('%directory' => $directory, '!htaccess' => '<br />' . nl2br(check_plain($htaccess_lines)));
     watchdog('security', "Security warning: Couldn't write .htaccess file. Please create a .htaccess file in your %directory directory which contains the following lines: <code>!htaccess</code>", $variables, WATCHDOG_ERROR);
   }
+}
+
+/**
+ * Returns the standard .htaccess lines that Drupal writes to file directories.
+ *
+ * @param $private
+ *   (Optional) Set to FALSE to return the .htaccess lines for an open and
+ *   public directory. The default is TRUE, which returns the .htaccess lines
+ *   for a private and protected directory.
+ *
+ * @return
+ *   A string representing the desired contents of the .htaccess file.
+ *
+ * @see file_create_htaccess()
+ */
+function file_htaccess_lines($private = TRUE) {
+  $lines = <<<EOF
+# Turn off all options we don't need.
+Options None
+Options +FollowSymLinks
+
+# Set the catch-all handler to prevent scripts from being executed.
+SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006
+<Files *>
+  # Override the handler again if we're run later in the evaluation list.
+  SetHandler Drupal_Security_Do_Not_Remove_See_SA_2013_003
+</Files>
+
+# If we know how to do it safely, disable the PHP engine entirely.
+<IfModule mod_php5.c>
+  php_flag engine off
+</IfModule>
+EOF;
+
+  if ($private) {
+    $lines = "Deny from all\n\n" . $lines;
+  }
+
+  return $lines;
 }
 
 /**
@@ -719,10 +754,11 @@ function file_usage_delete(stdClass $file, $module, $type = NULL, $id = NULL, $c
  * stored in the database. This is a powerful function that in many ways
  * performs like an advanced version of copy().
  * - Checks if $source and $destination are valid and readable/writable.
- * - Checks that $source is not equal to $destination; if they are an error
- *   is reported.
  * - If file already exists in $destination either the call will error out,
  *   replace the file or rename the file based on the $replace parameter.
+ * - If the $source and $destination are equal, the behavior depends on the
+ *   $replace parameter. FILE_EXISTS_REPLACE will error out. FILE_EXISTS_RENAME
+ *   will rename the file until the $destination is unique.
  * - Adds the new file to the files database. If the source file is a
  *   temporary file, the resulting file will also be a temporary file. See
  *   file_save_upload() for details on temporary files.
@@ -817,10 +853,11 @@ function file_valid_uri($uri) {
  * This is a powerful function that in many ways performs like an advanced
  * version of copy().
  * - Checks if $source and $destination are valid and readable/writable.
- * - Checks that $source is not equal to $destination; if they are an error
- *   is reported.
  * - If file already exists in $destination either the call will error out,
  *   replace the file or rename the file based on the $replace parameter.
+ * - If the $source and $destination are equal, the behavior depends on the
+ *   $replace parameter. FILE_EXISTS_REPLACE will error out. FILE_EXISTS_RENAME
+ *   will rename the file until the $destination is unique.
  * - Provides a fallback using realpaths if the move fails using stream
  *   wrappers. This can occur because PHP's copy() function does not properly
  *   support streams if safe_mode or open_basedir are enabled. See

@@ -4097,7 +4097,7 @@ function drupal_region_class($region) {
  *       else being the same, JavaScript added by a call to drupal_add_js() that
  *       happened later in the page request gets added to the page after one for
  *       which drupal_add_js() happened earlier in the page request.
- *   - defer: If set to TRUE, the defer attribute is set on the &lt;script&gt;
+ *   - defer: If set to TRUE, the defer attribute is set on the <script>
  *     tag. Defaults to FALSE.
  *   - cache: If set to FALSE, the JavaScript file is loaded anew on every page
  *     call; in other words, it is not cached. Used only when 'type' references
@@ -5042,7 +5042,7 @@ function drupal_json_output($var = NULL) {
  */
 function drupal_get_private_key() {
   if (!($key = variable_get('drupal_private_key', 0))) {
-    $key = drupal_hash_base64(drupal_random_bytes(55));
+    $key = drupal_random_key();
     variable_set('drupal_private_key', $key);
   }
   return $key;
@@ -5081,7 +5081,7 @@ function drupal_get_token($value = '') {
  */
 function drupal_valid_token($token, $value = '', $skip_anonymous = FALSE) {
   global $user;
-  return (($skip_anonymous && $user->uid == 0) || ($token == drupal_get_token($value)));
+  return (($skip_anonymous && $user->uid == 0) || ($token === drupal_get_token($value)));
 }
 
 function _drupal_bootstrap_full() {
@@ -5114,6 +5114,10 @@ function _drupal_bootstrap_full() {
   module_load_all();
   // Make sure all stream wrappers are registered.
   file_get_stream_wrappers();
+  // Ensure mt_rand is reseeded, to prevent random values from one page load
+  // being exploited to predict random values in subsequent page loads.
+  $seed = unpack("L", drupal_random_bytes(4));
+  mt_srand($seed[1]);
 
   $test_info = &$GLOBALS['drupal_test_info'];
   if (!empty($test_info['in_child_site'])) {
