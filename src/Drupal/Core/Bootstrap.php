@@ -38,7 +38,7 @@ $this['phases'] = array(
  *
  * @see _drupal_bootstrap_configuration()
  */
-$this[DRUPAL_BOOTSTRAP_CONFIGURATION] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_CONFIGURATION] = function () {
   // Set the Drupal custom error handler.
   set_error_handler('_drupal_error_handler');
   set_exception_handler('_drupal_exception_handler');
@@ -48,14 +48,14 @@ $this[DRUPAL_BOOTSTRAP_CONFIGURATION] = $this->share(function () {
   timer_start('page');
   // Initialize the configuration, including variables from settings.php.
   $this['drupal_settings_initialize'];
-});
+};
 
 /**
  * Initializes the PHP environment.
  *
  * @see drupal_environment_initialize()
  */
-$this['drupal_environment_initialize'] = $this->share(function () {
+$this['drupal_environment_initialize'] = function () {
   if (!isset($_SERVER['HTTP_REFERER'])) {
     $_SERVER['HTTP_REFERER'] = '';
   }
@@ -109,14 +109,14 @@ $this['drupal_environment_initialize'] = $this->share(function () {
   // Set sane locale settings, to ensure consistent string, dates, times and
   // numbers handling.
   setlocale(LC_ALL, 'C');
-});
+};
 
 /**
  * Sets the base URL, cookie domain, and session name from configuration.
  *
  * @see drupal_settings_initialize()
  */
-$this['drupal_settings_initialize'] = $this->share(function () {
+$this['drupal_settings_initialize'] = function () {
   global $base_url, $base_path, $base_root;
 
   // Export these settings.php variables to the global namespace.
@@ -196,37 +196,37 @@ $this['drupal_settings_initialize'] = $this->share(function () {
   }
   $prefix = ini_get('session.cookie_secure') ? 'SSESS' : 'SESS';
   session_name($prefix . substr(hash('sha256', $session_name), 0, 32));
-});
+};
 
 /**
  * Attempts to serve a page from the cache.
  *
  * @see _drupal_bootstrap_page_cache()
  */
-$this[DRUPAL_BOOTSTRAP_PAGE_CACHE] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_PAGE_CACHE] = function () {
   global $user;
 
   $this['_drupal_bootstrap_page_cache__plugins'];
   drupal_block_denied(ip_address());
   $this['_drupal_bootstrap_page_cache__serve'];
-});
+};
 
 /**
  * Include the Drupal cache subsystem and plugins.
  */
-$this['_drupal_bootstrap_page_cache__plugins'] = $this->share(function () {
+$this['_drupal_bootstrap_page_cache__plugins'] = function () {
   // Allow specifying special cache handlers in settings.php, like
   // using memcached or files for storing cache information.
   require_once DRUPAL_ROOT . '/includes/cache.inc';
   foreach (variable_get('cache_backends', array()) as $include) {
     require_once DRUPAL_ROOT . '/' . $include;
   }
-});
+};
 
 /**
  * Actually serve the cached page.
  */
-$this['_drupal_bootstrap_page_cache__serve'] = $this->share(function () {
+$this['_drupal_bootstrap_page_cache__serve'] = function () {
   // Check for a cache mode force from settings.php.
   if (variable_get('page_cache_without_database')) {
     $cache_enabled = TRUE;
@@ -268,14 +268,14 @@ $this['_drupal_bootstrap_page_cache__serve'] = $this->share(function () {
       header('X-Drupal-Cache: MISS');
     }
   }
-});
+};
 
 /**
  * Initializes the database system and registers autoload functions.
  *
  * @see _drupal_bootstrap_database()
  */
-$this[DRUPAL_BOOTSTRAP_DATABASE] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_DATABASE] = function () {
   $this['_drupal_bootstrap_database__install'];
 
   $this['_drupal_bootstrap_database__testing'];
@@ -285,9 +285,9 @@ $this[DRUPAL_BOOTSTRAP_DATABASE] = $this->share(function () {
   require_once DRUPAL_ROOT . '/includes/database/database.inc';
 
   $this['_drupal_bootstrap_database__autoload'];
-});
+};
 
-$this['_drupal_bootstrap_database__install'] = $this->share(function () {
+$this['_drupal_bootstrap_database__install'] = function () {
   // Redirect the user to the installation script if Drupal has not been
   // installed yet (i.e., if no $databases array has been defined in the
   // settings.php file) and we are not already installing.
@@ -295,9 +295,9 @@ $this['_drupal_bootstrap_database__install'] = $this->share(function () {
     include_once DRUPAL_ROOT . '/includes/install.inc';
     install_goto('install.php');
   }
-});
+};
 
-$this['_drupal_bootstrap_database__testing'] = $this->share(function () {
+$this['_drupal_bootstrap_database__testing'] = function () {
   // The user agent header is used to pass a database prefix in the request when
   // running tests. However, for security reasons, it is imperative that we
   // validate we ourselves made the request.
@@ -325,23 +325,23 @@ $this['_drupal_bootstrap_database__testing'] = $this->share(function () {
       );
     }
   }
-});
+};
 
-$this['_drupal_bootstrap_database__autoload'] = $this->share(function () {
+$this['_drupal_bootstrap_database__autoload'] = function () {
   // Register autoload functions so that we can access classes and interfaces.
   // The database autoload routine comes first so that we can load the database
   // system without hitting the database. That is especially important during
   // the install or upgrade process.
   spl_autoload_register('drupal_autoload_class');
   spl_autoload_register('drupal_autoload_interface');
-});
+};
 
 /**
  * Loads system variables and all enabled bootstrap modules.
  *
  * @see _drupal_bootstrap_variables()
  */
-$this[DRUPAL_BOOTSTRAP_VARIABLES] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_VARIABLES] = function () {
   global $conf;
 
   // Initialize the lock system.
@@ -353,36 +353,36 @@ $this[DRUPAL_BOOTSTRAP_VARIABLES] = $this->share(function () {
   // Load bootstrap modules.
   require_once DRUPAL_ROOT . '/includes/module.inc';
   module_load_all(TRUE);
-});
+};
 
 /**
  * Initializes session handling
  */
-$this[DRUPAL_BOOTSTRAP_SESSION] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_SESSION] = function () {
   require_once DRUPAL_ROOT . '/' . variable_get('session_inc', 'includes/session.inc');
   drupal_session_initialize();
-});
+};
 
 /**
  * Invokes hook_boot(), initializes locking system, and sends HTTP headers.
  *
  * @see _drupal_bootstrap_page_header()
  */
-$this[DRUPAL_BOOTSTRAP_PAGE_HEADER] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_PAGE_HEADER] = function () {
   bootstrap_invoke_all('boot');
 
   if (!drupal_is_cli()) {
     ob_start();
     drupal_page_header();
   }
-});
+};
 
 /**
  * Initializes all the defined language types.
  *
  * @see drupal_language_initialize()
  */
-$this[DRUPAL_BOOTSTRAP_LANGUAGE] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_LANGUAGE] = function () {
   $types = language_types();
 
   // Ensure the language is correctly returned, even without multilanguage
@@ -402,15 +402,15 @@ $this[DRUPAL_BOOTSTRAP_LANGUAGE] = $this->share(function () {
     // environments.
     bootstrap_invoke_all('language_init');
   }
-});
+};
 
 /**
  * Fully loads Drupal. Validates and fixes input
  */
-$this[DRUPAL_BOOTSTRAP_FULL] = $this->share(function () {
+$this[DRUPAL_BOOTSTRAP_FULL] = function () {
   require_once DRUPAL_ROOT . '/includes/common.inc';
   _drupal_bootstrap_full();
-});
+};
 
   }
 }
