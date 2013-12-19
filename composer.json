@@ -5,7 +5,20 @@
     "autoload": {
         "psr-0": {
             "": "src/"
-        }
+        },
+        "classmap": [
+            "includes/",
+            "misc/",
+            "modules/",
+            "scripts/",
+            "themes/",
+            "authorize.php",
+            "cron.php",
+            "index.php",
+            "install.php",
+            "update.php",
+            "xmlrpc.php"
+        ]
     },
     "require": {
         "pimple/pimple": "2.0.*@dev"

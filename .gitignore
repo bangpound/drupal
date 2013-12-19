@@ -6,3 +6,5 @@ sites/*/files
 sites/*/private
 
 /vendor/
+/sites/*/vendor/
+/profiles/*/vendor/
