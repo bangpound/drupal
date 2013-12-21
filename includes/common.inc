@@ -684,6 +684,8 @@ function drupal_encode_path($path) {
  * @see url()
  */
 function drupal_goto($path = '', array $options = array(), $http_response_code = 302) {
+  /** @var Symfony\Component\HttpFoundation\Response $response */
+  $response = $GLOBALS['response'];
   // A destination in $_GET always overrides the function arguments.
   // We do not allow absolute URLs to be passed via $_GET, as this can be an attack vector.
   if (isset($_GET['destination']) && !url_is_external($_GET['destination'])) {
@@ -700,7 +702,8 @@ function drupal_goto($path = '', array $options = array(), $http_response_code =
 
   $url = url($path, $options);
 
-  header('Location: ' . $url, TRUE, $http_response_code);
+  $response->headers->set('Location', $url);
+  $response->setStatusCode($http_response_code);
 
   // The "Location" header sends a redirect status code to the HTTP daemon. In
   // some cases this can be wrong, so we make sure none of the code below the
@@ -2695,9 +2698,6 @@ function drupal_page_footer() {
 
   if (variable_get('cache', 0) && ($cache = drupal_page_set_cache())) {
     drupal_serve_page_from_cache($cache);
-  }
-  else {
-    ob_flush();
   }
 
   _registry_check_code(REGISTRY_WRITE_LOOKUP_CACHE);
