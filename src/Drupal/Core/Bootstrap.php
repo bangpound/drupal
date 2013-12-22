@@ -208,8 +208,6 @@ $this['drupal_settings_initialize'] = function () {
  * @see _drupal_bootstrap_page_cache()
  */
 $this[DRUPAL_BOOTSTRAP_PAGE_CACHE] = function () {
-  global $user;
-
   $this['_drupal_bootstrap_page_cache__plugins'];
   drupal_block_denied(ip_address());
   $this['_drupal_bootstrap_page_cache__serve'];
@@ -231,6 +229,8 @@ $this['_drupal_bootstrap_page_cache__plugins'] = function () {
  * Actually serve the cached page.
  */
 $this['_drupal_bootstrap_page_cache__serve'] = function () {
+  global $user;
+
   // Check for a cache mode force from settings.php.
   if (variable_get('page_cache_without_database')) {
     $cache_enabled = TRUE;
