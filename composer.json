@@ -22,9 +22,6 @@
         ]
     },
     "require": {
-        "php": ">=5.3.3",
-        "composer/installers": "~1.0",
-        "bangpound/drupal-bundle": "dev-master",
         "pimple/pimple": "2.0.*@dev"
     },
     "bin": ["scripts/drupal.sh", "scripts/password-hash.sh"]
