@@ -73,13 +73,16 @@ define('OPENID_NS_XRD', 'xri://$xrd*($v*2.0)');
  * Performs an HTTP 302 redirect (for the 1.x protocol).
  */
 function openid_redirect_http($url, $message) {
+  /** @var Symfony\Component\HttpFoundation\Response $response */
+  $response = $GLOBALS['response'];
   $query = array();
   foreach ($message as $key => $val) {
     $query[] = $key . '=' . urlencode($val);
   }
 
   $sep = (strpos($url, '?') === FALSE) ? '?' : '&';
-  header('Location: ' . $url . $sep . implode('&', $query), TRUE, 302);
+  $response->headers->set('Location', $url . $sep . implode('&', $query));
+  $response->setStatusCode(302);
 
   drupal_exit();
 }
