@@ -1,6 +1,7 @@
 {
-    "name": "bangpound/drupal-symfony",
-    "description": "Drupal as an HttpKernel application.",
+    "name": "drupal/drupal",
+    "description": "Drupal is an open source content management platform powering millions of websites and applications.",
+    "type": "drupal-core",
     "license": "GPL-2.0+",
     "autoload": {
         "psr-0": {
