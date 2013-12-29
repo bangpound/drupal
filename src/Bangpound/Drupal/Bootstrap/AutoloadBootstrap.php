@@ -81,7 +81,7 @@ class AutoloadBootstrap extends Bootstrap
             $searchdirs[] = conf_path();
 
             foreach ($searchdirs as $dir) {
-                $filename = $dir .'/vendor/autoload.php';
+                $filename = DRUPAL_ROOT .'/'. $dir .'/vendor/autoload.php';
                 if (file_exists($filename)) {
                     require $filename;
                 }
