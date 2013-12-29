@@ -1,6 +1,29 @@
 
 Drupal 7.25, xxxx-xx-xx (development version)
 -----------------------
+- Changed the Bartik theme to render content contained in <pre>, <code> and
+  similar tags in a larger font size, so it is easier to read.
+- Fixed a bug in the Search module that caused exceptions to be thrown during
+  searches if the server was not configured to represent decimal points as a
+  period.
+- Fixed a regression in the Image module that made image_style_url() not work
+  when a relative path (rather than a complete file URI) was passed to it.
+- Added an optional feature to the Statistics module to allow node views to be
+  tracked by Ajax requests rather than during the server-side generation of the
+  page. This allows the node counter to work on sites that use external page
+  caches (string change and new administrative option).
+- Added a link to the drupal.org documentation page for cron to the Cron
+  settings page (string change).
+- Added a 'drupal_anonymous_user_object' variable to allow the anonymous user
+  object returned by drupal_anonymous_user() to be overridden with a classed
+  object (API addition).
+- Changed the database API to allow inserts based on a SELECT * query to work
+  correctly.
+- Changed the database schema of the {file_managed} table to allow Drupal to
+  manage files larger than 4 GB.
+- Changed the File module's hook_field_load() implementation to prevent file
+  entity properties which have the same name as file or image field properties
+  from overwriting the field properties (minor API change).
 
 Drupal 7.24, 2013-11-20
 ----------------------
