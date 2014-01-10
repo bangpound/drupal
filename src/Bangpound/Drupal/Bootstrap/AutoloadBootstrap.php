@@ -23,6 +23,10 @@ class AutoloadBootstrap extends Bootstrap
          * @see drupal_get_profile()
          */
         $this['DRUPAL_BOOTSTRAP_DATABASE'] = $this->extend(DRUPAL_BOOTSTRAP_DATABASE, function () {
+            $this['_drupal_bootstrap_composer_autoload'];
+        });
+
+        $this['_drupal_bootstrap_composer_autoload'] = function () {
             global $install_state;
 
             if (isset($install_state['parameters']['profile'])) {
@@ -42,6 +46,6 @@ class AutoloadBootstrap extends Bootstrap
                     require $filename;
                 }
             }
-        });
+        };
     }
 }
