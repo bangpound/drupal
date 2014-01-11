@@ -22,7 +22,7 @@
         ]
     },
     "require": {
-        "pimple/pimple": "2.0.*@dev"
+        "pimple/pimple": "~1.1"
     },
     "bin": ["scripts/drupal.sh", "scripts/password-hash.sh"]
 }
