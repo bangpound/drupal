@@ -26,7 +26,7 @@ class AutoloadBootstrap extends Bootstrap
             $this['_drupal_bootstrap_composer_autoload'];
         });
 
-        $this['_drupal_bootstrap_composer_autoload'] = function () {
+        $this['_drupal_bootstrap_composer_autoload'] = $this->share(function () {
             global $install_state;
 
             if (isset($install_state['parameters']['profile'])) {
@@ -46,6 +46,6 @@ class AutoloadBootstrap extends Bootstrap
                     require $filename;
                 }
             }
-        };
+        });
     }
 }
