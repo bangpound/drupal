@@ -11,8 +11,8 @@ abstract class Bootstrap extends \Pimple
     /**
      * @param  null  $phase
      * @param  bool  $new_phase
-     * @return mixed
-     * @see drupal_bootstrap()
+     * @return mixed Phase number
+     *                         @see drupal_bootstrap()
      */
     public function __invoke($phase = NULL, $new_phase = TRUE)
     {
