@@ -9,10 +9,11 @@ namespace Drupal;
 abstract class Bootstrap extends \Pimple
 {
     /**
-     * @param  null  $phase
-     * @param  bool  $new_phase
-     * @return mixed Phase number
-     *                         @see drupal_bootstrap()
+     * @param  null  $phase     Phase
+     * @param  bool  $new_phase New phase
+     * @return mixed
+     *
+     * @see drupal_bootstrap()
      */
     public function __invoke($phase = NULL, $new_phase = TRUE)
     {
