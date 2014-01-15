@@ -22,10 +22,10 @@ class Bootstrap extends BaseBootstrap
 
         parent::__construct($values);
 
-        // The series of bootstrap phases is represented by a
-        // consecutive series of integer constants. Probably this cannot
-        // be changed, but maybe new steps can be inserted between other
-        // steps if the intermediate steps are floats.
+        // Bootstrap phases are represented by a consecutive series of
+        // integer constants. These phases should not be changed at all.
+        // Use event listeners to add new functionality between
+        // existing bootstrap phases.
         $this['phases'] = array(
             DRUPAL_BOOTSTRAP_CONFIGURATION,
             DRUPAL_BOOTSTRAP_PAGE_CACHE,
