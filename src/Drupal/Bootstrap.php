@@ -46,10 +46,22 @@ abstract class Bootstrap extends \Pimple
                     $stored_phase = $current_phase;
                 }
 
-                $this[$current_phase];
+                $this->call($current_phase);
             }
         }
 
         return $stored_phase;
+    }
+
+    /**
+     * Calls the bootstrap phase.
+     *
+     * This method can be overridden to support events in subclasses.
+     *
+     * @param null $phase Phase
+     */
+    protected function call($phase = NULL)
+    {
+        $this[$phase];
     }
 }
