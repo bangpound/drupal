@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.26-dev');
+define('VERSION', '7.27-dev');
 
 /**
  * Core API compatibility.
@@ -2188,16 +2188,19 @@ function drupal_anonymous_user() {
  * @param $new_phase
  *   A boolean, set to FALSE if calling drupal_bootstrap from inside a
  *   function called from drupal_bootstrap (recursion).
- * @param $class
- *   Class name of the Drupal Bootstrap container.
+ * @param $object
+ *   Drupal Bootstrap object.
  *
  * @return
  *   The most recently completed phase.
  */
-function drupal_bootstrap($phase = NULL, $new_phase = TRUE, $class = 'Drupal\\Core\\Bootstrap') {
+function drupal_bootstrap($phase = NULL, $new_phase = TRUE, \Drupal\Bootstrap $object = NULL) {
   static $bootstrap;
   if (!isset($bootstrap)) {
-    $bootstrap = new $class();
+    if (!isset($object)) {
+      $object = new \Drupal\Core\Bootstrap();
+    }
+    $bootstrap = $object;
   }
   return $bootstrap($phase, $new_phase);
 }
