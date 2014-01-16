@@ -1,8 +1,9 @@
 {
     "autoload": {
         "classmap": [
-            "modules/",
-            "themes/"
         ]
+    },
+    "config": {
+        "vendor-dir": "autoload"
     }
 }

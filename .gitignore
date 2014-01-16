@@ -8,3 +8,7 @@ sites/*/private
 /vendor/
 /sites/*/vendor/
 /profiles/*/vendor/
+
+/autoload/
+/sites/*/autoload/
+/profiles/*/autoload/

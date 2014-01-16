@@ -35,13 +35,18 @@ class AutoloadBootstrap extends Bootstrap
                 $profile = variable_get('install_profile', 'standard');
             }
 
+            $filename = DRUPAL_ROOT .'/autoload/autoload.php';
+            if (file_exists($filename)) {
+                require $filename;
+            }
+
             $searchdirs = array();
             $searchdirs[] = 'profiles/'. $profile;
             $searchdirs[] = 'sites/all';
             $searchdirs[] = conf_path();
 
             foreach ($searchdirs as $dir) {
-                $filename = DRUPAL_ROOT .'/'. $dir .'/vendor/autoload.php';
+                $filename = DRUPAL_ROOT .'/'. $dir .'/autoload/autoload.php';
                 if (file_exists($filename)) {
                     require $filename;
                 }

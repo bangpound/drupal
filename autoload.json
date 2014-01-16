@@ -1,0 +1,20 @@
+{
+    "autoload": {
+        "classmap": [
+            "includes/",
+            "misc/",
+            "modules/",
+            "scripts/",
+            "themes/",
+            "authorize.php",
+            "cron.php",
+            "index.php",
+            "install.php",
+            "update.php",
+            "xmlrpc.php"
+        ]
+    },
+    "config": {
+        "vendor-dir": "autoload"
+    }
+}
