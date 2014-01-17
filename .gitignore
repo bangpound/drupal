@@ -9,6 +9,4 @@ sites/*/private
 /sites/*/vendor/
 /profiles/*/vendor/
 
-/autoload/
-/sites/*/autoload/
-/profiles/*/autoload/
+classmap.php

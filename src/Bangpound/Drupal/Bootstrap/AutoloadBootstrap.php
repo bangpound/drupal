@@ -3,6 +3,7 @@
 namespace Bangpound\Drupal\Bootstrap;
 
 use Drupal\Core\Bootstrap;
+use Symfony\Component\ClassLoader\MapClassLoader;
 
 /**
  * Class AutoloadBootstrap
@@ -37,20 +38,17 @@ class AutoloadBootstrap extends Bootstrap
                 $profile = variable_get('install_profile', 'standard');
             }
 
-            $filename = DRUPAL_ROOT .'/autoload/autoload.php';
-            if (file_exists($filename)) {
-                require $filename;
-            }
-
             $searchdirs = array();
-            $searchdirs[] = 'profiles/'. $profile;
-            $searchdirs[] = 'sites/all';
-            $searchdirs[] = conf_path();
+            $searchdirs[] = DRUPAL_ROOT;
+            $searchdirs[] = DRUPAL_ROOT . '/profiles/'. $profile;
+            $searchdirs[] = DRUPAL_ROOT . '/sites/all';
+            $searchdirs[] = DRUPAL_ROOT . '/'. conf_path();
 
             foreach ($searchdirs as $dir) {
-                $filename = DRUPAL_ROOT .'/'. $dir .'/autoload/autoload.php';
+                $filename = $dir .'/classmap.php';
                 if (file_exists($filename)) {
-                    require $filename;
+                    $loader = new MapClassLoader(require $filename);
+                    $loader->register(true);
                 }
             }
         });

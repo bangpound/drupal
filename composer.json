@@ -9,14 +9,18 @@
         }
     },
     "require": {
+        "symfony/class-loader": "~2.4",
         "pimple/pimple": "~1.1"
+    },
+    "require-dev": {
+        "composer/composer": "1.0.*@dev"
     },
     "scripts": {
         "post-install-cmd": [
-            "Bangpound\\Composer\\DrupalAutoloadScript::dumpAutoload"
+            "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"
         ],
         "post-update-cmd": [
-            "Bangpound\\Composer\\DrupalAutoloadScript::dumpAutoload"
+            "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"
         ]
     }
 }
