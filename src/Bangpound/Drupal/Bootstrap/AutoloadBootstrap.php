@@ -23,6 +23,8 @@ class AutoloadBootstrap extends Bootstrap
          * @see drupal_get_profile()
          */
         $this[DRUPAL_BOOTSTRAP_DATABASE] = $this->share($this->extend(DRUPAL_BOOTSTRAP_DATABASE, function () {
+            spl_autoload_unregister('drupal_autoload_class');
+            spl_autoload_unregister('drupal_autoload_interface');
             $this['_drupal_bootstrap_composer_autoload'];
         }));
 
