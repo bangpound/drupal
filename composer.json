@@ -24,5 +24,8 @@
     "require": {
         "pimple/pimple": "~1.1"
     },
-    "bin": ["scripts/drupal.sh", "scripts/password-hash.sh"]
+    "bin": [
+        "scripts/drupal.sh",
+        "scripts/password-hash.sh"
+    ]
 }
