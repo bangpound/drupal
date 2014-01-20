@@ -6,23 +6,22 @@
     "autoload": {
         "psr-0": {
             "": "src/"
-        },
-        "classmap": [
-            "includes/",
-            "misc/",
-            "modules/",
-            "scripts/",
-            "themes/",
-            "authorize.php",
-            "cron.php",
-            "index.php",
-            "install.php",
-            "update.php",
-            "xmlrpc.php"
-        ]
+        }
     },
     "require": {
+        "symfony/class-loader": "~2.4",
         "pimple/pimple": "~1.1"
+    },
+    "require-dev": {
+        "composer/composer": "1.0.*@dev"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"
+        ],
+        "post-update-cmd": [
+            "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"
+        ]
     },
     "bin": [
         "scripts/drupal.sh",

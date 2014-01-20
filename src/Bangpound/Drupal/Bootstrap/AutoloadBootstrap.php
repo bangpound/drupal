@@ -3,6 +3,7 @@
 namespace Bangpound\Drupal\Bootstrap;
 
 use Drupal\Core\Bootstrap;
+use Symfony\Component\ClassLoader\MapClassLoader;
 
 /**
  * Class AutoloadBootstrap
@@ -23,6 +24,8 @@ class AutoloadBootstrap extends Bootstrap
          * @see drupal_get_profile()
          */
         $this[DRUPAL_BOOTSTRAP_DATABASE] = $this->share($this->extend(DRUPAL_BOOTSTRAP_DATABASE, function () {
+            spl_autoload_unregister('drupal_autoload_class');
+            spl_autoload_unregister('drupal_autoload_interface');
             $this['_drupal_bootstrap_composer_autoload'];
         }));
 
@@ -36,14 +39,16 @@ class AutoloadBootstrap extends Bootstrap
             }
 
             $searchdirs = array();
-            $searchdirs[] = 'profiles/'. $profile;
-            $searchdirs[] = 'sites/all';
-            $searchdirs[] = conf_path();
+            $searchdirs[] = DRUPAL_ROOT;
+            $searchdirs[] = DRUPAL_ROOT . '/profiles/'. $profile;
+            $searchdirs[] = DRUPAL_ROOT . '/sites/all';
+            $searchdirs[] = DRUPAL_ROOT . '/'. conf_path();
 
             foreach ($searchdirs as $dir) {
-                $filename = DRUPAL_ROOT .'/'. $dir .'/vendor/autoload.php';
+                $filename = $dir .'/classmap.php';
                 if (file_exists($filename)) {
-                    require $filename;
+                    $loader = new MapClassLoader(require $filename);
+                    $loader->register(true);
                 }
             }
         });

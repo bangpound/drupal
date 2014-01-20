@@ -8,3 +8,5 @@ sites/*/private
 /vendor/
 /sites/*/vendor/
 /profiles/*/vendor/
+
+classmap.php
