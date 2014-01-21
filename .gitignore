@@ -5,8 +5,10 @@ sites/*/settings*.php
 sites/*/files
 sites/*/private
 
+# Ignore vendor collections.
 /vendor/
 /sites/*/vendor/
 /profiles/*/vendor/
 
+# Ignore generated classmaps.
 classmap.php
