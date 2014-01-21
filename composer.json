@@ -4,7 +4,7 @@
     "type": "drupal-core",
     "license": "GPL-2.0+",
     "require": {
-        "bangpound/drupal-bootstrap": "dev-master"
+        "bangpound/drupal-bootstrap": "~1.0"
     },
     "scripts": {
     }
