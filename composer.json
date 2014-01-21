@@ -3,17 +3,8 @@
     "description": "Drupal is an open source content management platform powering millions of websites and applications.",
     "type": "drupal-core",
     "license": "GPL-2.0+",
-    "autoload": {
-        "psr-0": {
-            "": "src/"
-        }
-    },
     "require": {
-        "symfony/class-loader": "~2.4",
-        "pimple/pimple": "~1.1"
-    },
-    "require-dev": {
-        "composer/composer": "1.0.*@dev"
+        "bangpound/drupal-bootstrap": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
