@@ -8,6 +8,24 @@ class ClassMapGenerator extends BaseGenerator
 {
     private static $extensions = array('php', 'inc', 'module', 'theme', 'profile');
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function dump($dirs, $file)
+    {
+        $maps = array();
+
+        foreach ($dirs as $dir) {
+            $maps = array_merge($maps, static::createMap($dir));
+        }
+
+        if (!empty($maps)) {
+            file_put_contents($file, sprintf('<?php return %s;', var_export($maps, true)));
+        } elseif (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
     public static function createMap($path, $whitelist = null)
     {
         if (is_string($path)) {
