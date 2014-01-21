@@ -6,6 +6,11 @@ use Symfony\Component\Finder\Finder;
 
 class ClassMapGenerator extends BaseGenerator
 {
+    /**
+     * File extensions to scan for PHP classes, intefaces and traits.
+     *
+     * @var array
+     */
     private static $extensions = array('php', 'inc', 'module', 'theme', 'profile');
 
     /**
@@ -26,6 +31,9 @@ class ClassMapGenerator extends BaseGenerator
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function createMap($path, $whitelist = null)
     {
         if (is_string($path)) {
@@ -66,11 +74,7 @@ class ClassMapGenerator extends BaseGenerator
     }
 
     /**
-     * Extract the classes in the given file
-     *
-     * @param string $path The file to check
-     *
-     * @return array The found classes
+     * {@inheritdoc}
      */
     private static function findClasses($path)
     {
