@@ -1,5 +1,5 @@
 <?php
-namespace Bangpound\Drupal;
+namespace Bangpound\Drupal\Autoload;
 
 use Composer\Autoload\ClassMapGenerator as BaseGenerator;
 use Symfony\Component\Finder\Finder;

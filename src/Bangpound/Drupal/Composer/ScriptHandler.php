@@ -2,7 +2,7 @@
 
 namespace Bangpound\Drupal\Composer;
 
-use Bangpound\Drupal\ClassMapGenerator;
+use Bangpound\Drupal\Autoload\ClassMapGenerator;
 use Composer\Script\Event;
 use Symfony\Component\Finder\Finder;
 
