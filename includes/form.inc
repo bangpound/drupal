@@ -15,10 +15,9 @@
  * reference the form builder function using \@see. For examples, of this see
  * system_modules_uninstall() or user_pass(), the latter of which has the
  * following in its doxygen documentation:
- *
- * \@ingroup forms
- * \@see user_pass_validate().
- * \@see user_pass_submit().
+ * - \@ingroup forms
+ * - \@see user_pass_validate()
+ * - \@see user_pass_submit()
  *
  * @}
  */
@@ -3065,8 +3064,7 @@ function form_process_radios($element) {
  * @param $variables
  *   An associative array containing:
  *   - element: An associative array containing the properties of the element.
- *     Properties used: #title, #value, #return_value, #description, #required,
- *     #attributes, #checked.
+ *     Properties used: #id, #name, #attributes, #checked, #return_value.
  *
  * @ingroup themeable
  */
