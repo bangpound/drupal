@@ -1779,13 +1779,16 @@ function watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NO
  * @see theme_status_messages()
  */
 function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
-  if ($message) {
-    if (!isset($_SESSION['messages'][$type])) {
-      $_SESSION['messages'][$type] = array();
-    }
+  if (!isset($GLOBALS['service_container'])) {
+    return;
+  }
 
-    if ($repeat || !in_array($message, $_SESSION['messages'][$type])) {
-      $_SESSION['messages'][$type][] = $message;
+  /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+  $session = $GLOBALS['service_container']->get('session');
+
+  if ($message) {
+    if ($repeat || !in_array($message, $session->getFlashBag()->peek($type, array()))) {
+      $session->getFlashBag()->add($type, $message);
     }
 
     // Mark this page as being uncacheable.
@@ -1793,7 +1796,7 @@ function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
   }
 
   // Messages not set when DB connection fails.
-  return isset($_SESSION['messages']) ? $_SESSION['messages'] : NULL;
+  return !empty($session->getFlashBag()->peekAll()) ? $session->getFlashBag()->peekAll() : NULL;
 }
 
 /**
@@ -1822,10 +1825,17 @@ function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
  * @see theme_status_messages()
  */
 function drupal_get_messages($type = NULL, $clear_queue = TRUE) {
+  if (!isset($GLOBALS['service_container'])) {
+    return;
+  }
+
+  /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+  $session = $GLOBALS['service_container']->get('session');
+
   if ($messages = drupal_set_message()) {
     if ($type) {
       if ($clear_queue) {
-        unset($_SESSION['messages'][$type]);
+        $session->getFlashBag()->get($type);
       }
       if (isset($messages[$type])) {
         return array($type => $messages[$type]);
@@ -1833,7 +1843,7 @@ function drupal_get_messages($type = NULL, $clear_queue = TRUE) {
     }
     else {
       if ($clear_queue) {
-        unset($_SESSION['messages']);
+        $session->getFlashBag()->clear();
       }
       return $messages;
     }
