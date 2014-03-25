@@ -1197,8 +1197,12 @@ function _drupal_set_preferred_header_name($name = NULL) {
  *   specified headers.
  */
 function drupal_send_headers($default_headers = array(), $only_default = FALSE) {
+  if (!isset($GLOBALS['service_container'])) {
+    return;
+  }
+
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = $GLOBALS['response'];
+  $response = $GLOBALS['service_container']->get('bangpound_drupal.response');
   $headers_sent = &drupal_static(__FUNCTION__, FALSE);
   $headers = drupal_get_http_header();
   if ($only_default && $headers_sent) {
@@ -1280,8 +1284,12 @@ function drupal_page_header() {
  * response is sent.
  */
 function drupal_serve_page_from_cache(stdClass $cache) {
+  if (!isset($GLOBALS['service_container'])) {
+    return;
+  }
+
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = $GLOBALS['response'];
+  $response = $GLOBALS['service_container']->get('bangpound_drupal.response');
   // Negotiate whether to use compression.
   $page_compression = !empty($cache->data['page_compressed']);
   $return_compressed = $page_compression && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE;
