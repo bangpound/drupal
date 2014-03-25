@@ -1804,7 +1804,8 @@ function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
   }
 
   // Messages not set when DB connection fails.
-  return !empty($session->getFlashBag()->peekAll()) ? $session->getFlashBag()->peekAll() : NULL;
+  $messages = $session->getFlashBag()->peekAll();
+  return !empty($messages) ? $messages : NULL;
 }
 
 /**
