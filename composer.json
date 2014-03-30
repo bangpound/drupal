@@ -6,6 +6,10 @@
     "require": {
         "bangpound/drupal-bootstrap": "~1.0"
     },
+    "bin": [
+        "scripts/drupal.sh",
+        "scripts/password-hash.sh"
+    ],
     "scripts": {
         "post-install-cmd": [
             "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"

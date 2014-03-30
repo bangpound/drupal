@@ -2213,7 +2213,7 @@ function drupal_anonymous_user() {
  * @return
  *   The most recently completed phase.
  */
-function drupal_bootstrap($phase = NULL, $new_phase = TRUE, \Drupal\Core\Bootstrap $object = NULL) {
+function drupal_bootstrap($phase = NULL, $new_phase = TRUE, \Drupal\Core\BootstrapInterface $object = NULL) {
   static $bootstrap;
   if (!isset($bootstrap)) {
     if (!isset($object)) {
