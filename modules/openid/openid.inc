@@ -73,12 +73,8 @@ define('OPENID_NS_XRD', 'xri://$xrd*($v*2.0)');
  * Performs an HTTP 302 redirect (for the 1.x protocol).
  */
 function openid_redirect_http($url, $message) {
-  if (!isset($GLOBALS['service_container'])) {
-    return;
-  }
-
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = $GLOBALS['service_container']->get('bangpound_drupal.response');
+  $response = \Drufony::get('bangpound_drupal.response');
   $query = array();
   foreach ($message as $key => $val) {
     $query[] = $key . '=' . urlencode($val);
