@@ -1199,7 +1199,7 @@ function _drupal_set_preferred_header_name($name = NULL) {
 function drupal_send_headers($default_headers = array(), $only_default = FALSE) {
 
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::get('bangpound_drupal.response');
+  $response = \Drufony::getResponse();
   $headers_sent = &drupal_static(__FUNCTION__, FALSE);
   $headers = drupal_get_http_header();
   if ($only_default && $headers_sent) {
@@ -1283,7 +1283,7 @@ function drupal_page_header() {
 function drupal_serve_page_from_cache(stdClass $cache) {
 
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::get('bangpound_drupal.response');
+  $response = \Drufony::getResponse();
   // Negotiate whether to use compression.
   $page_compression = !empty($cache->data['page_compressed']);
   $return_compressed = $page_compression && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE;
@@ -1783,7 +1783,7 @@ function watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NO
 function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
 
   /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
-  $session = \Drufony::get('session');
+  $session = \Drufony::getSession();
 
   if ($message) {
     if ($repeat || !in_array($message, $session->getFlashBag()->peek($type, array()))) {
@@ -1826,7 +1826,7 @@ function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
  */
 function drupal_get_messages($type = NULL, $clear_queue = TRUE) {
   /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
-  $session = \Drufony::get('session');
+  $session = \Drufony::getSession();
 
   if ($messages = drupal_set_message()) {
     if ($type) {

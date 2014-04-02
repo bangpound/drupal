@@ -74,7 +74,7 @@ define('OPENID_NS_XRD', 'xri://$xrd*($v*2.0)');
  */
 function openid_redirect_http($url, $message) {
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::get('bangpound_drupal.response');
+  $response = \Drufony::getResponse();
   $query = array();
   foreach ($message as $key => $val) {
     $query[] = $key . '=' . urlencode($val);

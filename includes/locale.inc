@@ -1745,7 +1745,7 @@ function _locale_export_po_generate($language = NULL, $strings = array(), $heade
  */
 function _locale_export_po($language = NULL, $output = NULL) {
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::get('bangpound_drupal.response');
+  $response = \Drufony::getResponse();
   // Log the export event.
   if (isset($language)) {
     $filename = $language->language . '.po';

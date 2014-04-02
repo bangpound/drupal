@@ -685,7 +685,7 @@ function drupal_encode_path($path) {
  */
 function drupal_goto($path = '', array $options = array(), $http_response_code = 302) {
   /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::get('bangpound_drupal.response');
+  $response = \Drufony::getResponse();
   // A destination in $_GET always overrides the function arguments.
   // We do not allow absolute URLs to be passed via $_GET, as this can be an attack vector.
   if (isset($_GET['destination']) && !url_is_external($_GET['destination'])) {
