@@ -2717,6 +2717,7 @@ function drupal_exit($destination = NULL) {
     }
     drupal_session_commit();
   }
+  exit;
 }
 
 /**
