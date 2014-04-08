@@ -718,7 +718,7 @@ function drupal_goto($path = '', array $options = array(), $http_response_code =
  * bubble up to menu_execute_active_handler() should call drupal_site_offline().
  */
 function drupal_site_offline() {
-  drupal_deliver_page(MENU_SITE_OFFLINE);
+  throw new \Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 }
 
 /**
@@ -730,7 +730,7 @@ function drupal_site_offline() {
  * bubble up to menu_execute_active_handler() should call drupal_not_found().
  */
 function drupal_not_found() {
-  drupal_deliver_page(MENU_NOT_FOUND);
+  throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 }
 
 /**
@@ -743,7 +743,7 @@ function drupal_not_found() {
  * drupal_access_denied().
  */
 function drupal_access_denied() {
-  drupal_deliver_page(MENU_ACCESS_DENIED);
+  throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 }
 
 /**
