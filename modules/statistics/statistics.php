@@ -5,8 +5,6 @@
  * Handles counts of node views via Ajax with minimal bootstrap.
  */
 
-require __DIR__ . '/../../vendor/autoload.php';
-
 /**
 * Root directory of Drupal installation.
 */
