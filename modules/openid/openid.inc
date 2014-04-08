@@ -79,7 +79,8 @@ function openid_redirect_http($url, $message) {
   }
 
   $sep = (strpos($url, '?') === FALSE) ? '?' : '&';
-  header('Location: ' . $url . $sep . implode('&', $query), TRUE, 302);
+  drupal_add_http_header('Location', $url . $sep . implode('&', $query));
+  drupal_add_http_header('Status', 302);
 
   drupal_exit();
 }

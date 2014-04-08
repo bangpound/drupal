@@ -700,7 +700,8 @@ function drupal_goto($path = '', array $options = array(), $http_response_code =
 
   $url = url($path, $options);
 
-  header('Location: ' . $url, TRUE, $http_response_code);
+  drupal_add_http_header('Location', $url);
+  drupal_add_http_header('Status', $http_response_code);
 
   // The "Location" header sends a redirect status code to the HTTP daemon. In
   // some cases this can be wrong, so we make sure none of the code below the
