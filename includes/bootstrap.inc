@@ -1197,33 +1197,7 @@ function _drupal_set_preferred_header_name($name = NULL) {
  *   specified headers.
  */
 function drupal_send_headers($default_headers = array(), $only_default = FALSE) {
-
-  /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::getResponse();
-  $headers_sent = &drupal_static(__FUNCTION__, FALSE);
-  $headers = drupal_get_http_header();
-  if ($only_default && $headers_sent) {
-    $headers = array();
-  }
-  $headers_sent = TRUE;
-
-  $header_names = _drupal_set_preferred_header_name();
-  foreach ($default_headers as $name => $value) {
-    $name_lower = strtolower($name);
-    if (!isset($headers[$name_lower])) {
-      $headers[$name_lower] = $value;
-      $header_names[$name_lower] = $name;
-    }
-  }
-  foreach ($headers as $name_lower => $value) {
-    if ($name_lower == 'status') {
-      $response->setStatusCode($value);
-    }
-    // Skip headers that have been unset.
-    elseif ($value !== FALSE) {
-      $response->headers->set($header_names[$name_lower], $value);
-    }
-  }
+  // No-op. Handled during Symfony kernel.response event.
 }
 
 /**
@@ -1281,9 +1255,6 @@ function drupal_page_header() {
  * response is sent.
  */
 function drupal_serve_page_from_cache(stdClass $cache) {
-
-  /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::getResponse();
   // Negotiate whether to use compression.
   $page_compression = !empty($cache->data['page_compressed']);
   $return_compressed = $page_compression && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE;
@@ -1316,7 +1287,7 @@ function drupal_serve_page_from_cache(stdClass $cache) {
 
   // Entity tag should change if the output changes.
   $etag = '"' . $cache->created . '-' . intval($return_compressed) . '"';
-  $response->headers->set('Etag', $etag);
+  header('Etag: ' . $etag);
 
   // See if the client has provided the required HTTP headers.
   $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) : FALSE;
@@ -1325,7 +1296,7 @@ function drupal_serve_page_from_cache(stdClass $cache) {
   if ($if_modified_since && $if_none_match
       && $if_none_match == $etag // etag must match
       && $if_modified_since == $cache->created) {  // if-modified-since must match
-    $response->setStatusCode(304);
+    header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified');
     drupal_send_headers($default_headers);
     return;
   }
@@ -1352,17 +1323,17 @@ function drupal_serve_page_from_cache(stdClass $cache) {
   // revalidation. If a Vary header has been set in hook_boot(), it is assumed
   // that the module knows how to cache the page.
   if (!isset($hook_boot_headers['vary']) && !variable_get('omit_vary_cookie')) {
-    $response->headers->set('Vary', 'Cookie');
+    header('Vary: Cookie');
   }
 
   if ($page_compression) {
-    $response->headers->set('Vary', 'Accept-Encoding', false);
+    header('Vary: Accept-Encoding', FALSE);
     // If page_compression is enabled, the cache contains gzipped data.
     if ($return_compressed) {
       // $cache->data['body'] is already gzip'ed, so make sure
       // zlib.output_compression does not compress it once more.
       ini_set('zlib.output_compression', '0');
-      $response->headers->set('Content-Encoding', 'gzip');
+      header('Content-Encoding: gzip');
     }
     else {
       // The client does not support compression, so unzip the data in the
@@ -1937,8 +1908,9 @@ function drupal_is_denied($ip) {
 function drupal_block_denied($ip) {
   // Deny access to blocked IP addresses - t() is not yet available.
   if (drupal_is_denied($ip)) {
-    $message = 'Sorry, ' . check_plain(ip_address()) . ' has been banned.';
-    throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException($message);
+    header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+    print 'Sorry, ' . check_plain(ip_address()) . ' has been banned.';
+    exit();
   }
 }
 
@@ -2539,8 +2511,8 @@ function drupal_fast_404() {
       drupal_add_http_header('Status', '404 Not Found');
       $fast_404_html = variable_get('404_fast_html', '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>');
       // Replace @path in the variable with the page path.
-      $message = strtr($fast_404_html, array('@path' => check_plain(request_uri())));
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException($message);
+      print strtr($fast_404_html, array('@path' => check_plain(request_uri())));
+      exit;
     }
   }
 }

@@ -1744,8 +1744,6 @@ function _locale_export_po_generate($language = NULL, $strings = array(), $heade
  *   on how it can be generated.
  */
 function _locale_export_po($language = NULL, $output = NULL) {
-  /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::getResponse();
   // Log the export event.
   if (isset($language)) {
     $filename = $language->language . '.po';
@@ -1756,8 +1754,8 @@ function _locale_export_po($language = NULL, $output = NULL) {
     watchdog('locale', 'Exported translation file: %filename.', array('%filename' => $filename));
   }
   // Download the file for the client.
-  $response->headers->add("Content-Disposition", "attachment; filename=$filename");
-  $response->headers->add("Content-Type", "text/plain; charset=utf-8");
+  drupal_add_http_header("Content-Disposition", "attachment; filename=$filename");
+  drupal_add_http_header("Content-Type", "text/plain; charset=utf-8");
   print $output;
   drupal_exit();
 }

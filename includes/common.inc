@@ -684,8 +684,6 @@ function drupal_encode_path($path) {
  * @see url()
  */
 function drupal_goto($path = '', array $options = array(), $http_response_code = 302) {
-  /** @var Symfony\Component\HttpFoundation\Response $response */
-  $response = \Drufony::getResponse();
   // A destination in $_GET always overrides the function arguments.
   // We do not allow absolute URLs to be passed via $_GET, as this can be an attack vector.
   if (isset($_GET['destination']) && !url_is_external($_GET['destination'])) {
@@ -702,8 +700,8 @@ function drupal_goto($path = '', array $options = array(), $http_response_code =
 
   $url = url($path, $options);
 
-  $response->headers->set('Location', $url);
-  $response->setStatusCode($http_response_code);
+  drupal_add_http_header('Location', $url);
+  drupal_add_http_header('Status', $http_response_code);
 
   // The "Location" header sends a redirect status code to the HTTP daemon. In
   // some cases this can be wrong, so we make sure none of the code below the
@@ -720,7 +718,7 @@ function drupal_goto($path = '', array $options = array(), $http_response_code =
  * bubble up to menu_execute_active_handler() should call drupal_site_offline().
  */
 function drupal_site_offline() {
-  drupal_deliver_page(MENU_SITE_OFFLINE);
+  throw new \Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 }
 
 /**
@@ -732,7 +730,7 @@ function drupal_site_offline() {
  * bubble up to menu_execute_active_handler() should call drupal_not_found().
  */
 function drupal_not_found() {
-  drupal_deliver_page(MENU_NOT_FOUND);
+  throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 }
 
 /**
@@ -745,7 +743,7 @@ function drupal_not_found() {
  * drupal_access_denied().
  */
 function drupal_access_denied() {
-  drupal_deliver_page(MENU_ACCESS_DENIED);
+  throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 }
 
 /**
