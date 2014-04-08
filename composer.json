@@ -11,15 +11,5 @@
         "scripts/password-hash.sh"
     ],
     "scripts": {
-        "post-install-cmd": [
-            "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"
-        ],
-        "post-update-cmd": [
-            "Bangpound\\Drupal\\Composer\\ScriptHandler::dumpAutoload"
-        ]
-    },
-    "bin": [
-        "scripts/drupal.sh",
-        "scripts/password-hash.sh"
-    ]
+    }
 }
