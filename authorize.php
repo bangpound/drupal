@@ -20,8 +20,6 @@
  * @link authorize Authorized operation helper functions @endlink
  */
 
-include __DIR__ . '/vendor/autoload.php';
-
 /**
  * Defines the root directory of the Drupal installation.
  */

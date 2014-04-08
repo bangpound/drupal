@@ -11,13 +11,11 @@
  * See COPYRIGHT.txt and LICENSE.txt.
  */
 
-include __DIR__ . '/vendor/autoload.php';
-
 /**
  * Root directory of Drupal installation.
  */
 define('DRUPAL_ROOT', getcwd());
 
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL, TRUE, new \Drupal\Core\Bootstrap());
+drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 menu_execute_active_handler();
