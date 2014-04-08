@@ -5,8 +5,6 @@
  * PHP page for handling incoming XML-RPC requests from clients.
  */
 
-include __DIR__ . '/vendor/autoload.php';
-
 /**
  * Root directory of Drupal installation.
  */
