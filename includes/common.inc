@@ -2693,6 +2693,10 @@ function drupal_page_footer() {
   // Commit the user session, if needed.
   drupal_session_commit();
 
+  if (variable_get('cache', 0) && ($cache = drupal_page_set_cache())) {
+    drupal_serve_page_from_cache($cache);
+  }
+
   _registry_check_code(REGISTRY_WRITE_LOOKUP_CACHE);
   drupal_cache_system_paths();
   module_implements_write_cache();
