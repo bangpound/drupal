@@ -10,6 +10,7 @@
         "scripts/drupal.sh",
         "scripts/password-hash.sh"
     ],
+    "classmap": ["includes/"],
     "scripts": {
     }
 }
