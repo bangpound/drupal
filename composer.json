@@ -5,7 +5,8 @@
     "license": "GPL-2.0+",
     "require": {
         "ext-gd": "*",
-        "bangpound/drupal-bootstrap": "~1.0"
+        "bangpound/drupal-bootstrap": "~1.0",
+        "drush/drush": "7.0.*@dev"
     },
     "bin": [
         "scripts/drupal.sh",
