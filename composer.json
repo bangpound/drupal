@@ -4,7 +4,9 @@
     "type": "drupal-core",
     "license": "GPL-2.0+",
     "require": {
-        "bangpound/drupal-bootstrap": "~1.0"
+        "ext-gd": "*",
+        "bangpound/drupal-bootstrap": "~1.0",
+        "drush/drush": "7.0.*@dev"
     },
     "bin": [
         "scripts/drupal.sh",
