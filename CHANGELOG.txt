@@ -1,6 +1,23 @@
 
 Drupal 7.28, xxxx-xx-xx (development version)
 -----------------------
+- Fixed the behavior of the token system's "[node:summary]" token when the body
+  field does not have a manual summary.
+- Changed the behavior of db_query_temporary() so that it works on SELECT
+  queries even when they have leading comments/whitespace. A side effect of
+  this fix is that db_query_temporary() will now fail with an error if it is
+  ever used on non-SELECT queries.
+- Added a "node_admin_filter" tag to the database query used to build the list
+  of nodes on the content administration page, to make it easier to alter.
+- Made the cron queue system log any exceptions that are thrown while an item
+  in the queue is being processed, rather than stopping the entire PHP request.
+- Improved screen reader support by adding an aria-live HTML attribute to file
+  upload fields when there is an error uploading the file (minor markup
+  change).
+- Made the pager on the Tracker module listing pages show the same number of
+  items as other pagers throughout Drupal core (minor UI change).
+- Fixed a bug which caused caches not to be properly cleared when a file entity
+  was saved or deleted.
 - Added several missing countries to the default list returned by
   country_get_list() (string change).
 - Replaced the term "weight" with "influence" in the content ranking settings
