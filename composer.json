@@ -12,6 +12,9 @@
         "scripts/drupal.sh",
         "scripts/password-hash.sh"
     ],
+    "autoload": {
+        "classmap": ["includes/", "modules/", "themes/"]
+    },
     "scripts": {
     }
 }
