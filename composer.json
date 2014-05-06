@@ -13,7 +13,7 @@
         "scripts/password-hash.sh"
     ],
     "autoload": {
-        "classmap": ["includes/"]
+        "classmap": ["includes/", "modules/", "themes/"]
     },
     "scripts": {
     }
