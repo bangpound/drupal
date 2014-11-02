@@ -4,7 +4,19 @@
     "type": "drupal-core",
     "license": "GPL-2.0+",
     "require": {
+        "php": ">=5.2.4",
+        "ext-date": "*",
+        "ext-dom": "*",
+        "ext-filter": "*",
         "ext-gd": "*",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-pcre": "*",
+        "ext-PDO": "*",
+        "ext-session": "*",
+        "ext-SimpleXML": "*",
+        "ext-SPL": "*",
+        "ext-xml": "*"
         "bangpound/drupal-bootstrap": "~1.0",
         "drush/drush": "7.0.*@dev"
     },
