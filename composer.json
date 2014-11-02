@@ -16,7 +16,7 @@
         "ext-session": "*",
         "ext-SimpleXML": "*",
         "ext-SPL": "*",
-        "ext-xml": "*"
+        "ext-xml": "*",
         "bangpound/drupal-bootstrap": "~1.0",
         "drush/drush": "7.0.*@dev"
     },
