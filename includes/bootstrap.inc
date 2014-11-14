@@ -512,6 +512,7 @@ function timer_stop($name) {
 
   if (isset($timers[$name]['start'])) {
     $stop = microtime(TRUE);
+    $timers[$name]['measures'][] = array($name, $timers[$name]['start'], $stop);
     $diff = round(($stop - $timers[$name]['start']) * 1000, 2);
     if (isset($timers[$name]['time'])) {
       $timers[$name]['time'] += $diff;
