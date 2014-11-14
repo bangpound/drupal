@@ -2365,8 +2365,7 @@ function _drupal_exception_handler($exception) {
  */
 function _drupal_bootstrap_configuration() {
   // Set the Drupal custom error handler.
-  set_error_handler('_drupal_error_handler');
-  set_exception_handler('_drupal_exception_handler');
+  \Symfony\Component\Debug\Debug::enable(-1);
 
   drupal_environment_initialize();
   // Start a page timer:
