@@ -12,6 +12,7 @@ define('DRUPAL_ROOT', substr($_SERVER['SCRIPT_FILENAME'], 0, strpos($_SERVER['SC
 // Change the directory to the Drupal root.
 chdir(DRUPAL_ROOT);
 
+require_once DRUPAL_ROOT . '/sites/all/libraries/composer/autoload.php';
 include_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
 if (variable_get('statistics_count_content_views', 0) && variable_get('statistics_count_content_views_ajax', 0)) {
