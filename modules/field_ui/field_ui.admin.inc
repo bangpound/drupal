@@ -503,12 +503,11 @@ function field_ui_field_overview_form($form, &$form_state, $entity_type, $bundle
         '#title' => t('New field name'),
         '#title_display' => 'invisible',
         // This field should stay LTR even for RTL languages.
-        '#field_prefix' => '<span dir="ltr">field_',
+        '#field_prefix' => '<span dir="ltr">',
         '#field_suffix' => '</span>&lrm;',
         '#size' => 15,
         '#description' => t('A unique machine-readable name containing letters, numbers, and underscores.'),
-        // 32 characters minus the 'field_' prefix.
-        '#maxlength' => 26,
+        '#maxlength' => 32,
         '#prefix' => '<div class="add-new-placeholder">&nbsp;</div>',
         '#machine_name' => array(
           'source' => array('fields', $name, 'label'),
@@ -686,8 +685,6 @@ function _field_ui_field_overview_form_validate_add_new($form, &$form_state) {
     else {
       $field_name = $field['field_name'];
 
-      // Add the 'field_' prefix.
-      $field_name = 'field_' . $field_name;
       form_set_value($form['fields']['_add_new_field']['field_name'], $field_name, $form_state);
     }
 
@@ -720,8 +717,7 @@ function _field_ui_field_overview_form_validate_add_new($form, &$form_state) {
  *   Whether or not the field machine name is taken.
  */
 function _field_ui_field_name_exists($value) {
-  // Prefix with 'field_'.
-  $field_name = 'field_' . $value;
+  $field_name = $value;
 
   // We need to check inactive fields as well, so we can't use
   // field_info_fields().
