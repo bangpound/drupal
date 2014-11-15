@@ -3472,7 +3472,11 @@ function drupal_pre_render_styles($elements) {
             $import_batch = array_slice($import, 0, 31);
             $import = array_slice($import, 31);
             $element = $style_element_defaults;
-            $element['#value'] = implode("\n", $import_batch);
+            // This simplifies the JavaScript regex, allowing each line
+            // (separated by \n) to be treated as a completely different string.
+            // This means that we can use ^ and $ on one line at a time, and not
+            // worry about style tags since they'll never match the regex.
+            $element['#value'] = "\n" . implode("\n", $import_batch) . "\n";
             $element['#attributes']['media'] = $group['media'];
             $element['#browsers'] = $group['browsers'];
             $elements[] = $element;
@@ -3798,7 +3802,7 @@ function _drupal_load_stylesheet($matches) {
   // Alter all internal url() paths. Leave external paths alone. We don't need
   // to normalize absolute paths here (i.e. remove folder/... segments) because
   // that will be done later.
-  return preg_replace('/url\(\s*([\'"]?)(?![a-z]+:|\/+)/i', 'url(\1'. $directory, $file);
+  return preg_replace('/url\(\s*([\'"]?)(?![a-z]+:|\/+)([^\'")]+)([\'"]?)\s*\)/i', 'url(\1' . $directory . '\2\3)', $file);
 }
 
 /**
@@ -5285,8 +5289,6 @@ function drupal_cron_run() {
     foreach ($queues as $queue_name => $info) {
       DrupalQueue::get($queue_name)->createQueue();
     }
-    // Register shutdown callback.
-    drupal_register_shutdown_function('drupal_cron_cleanup');
 
     // Iterate through the modules calling their cron handlers (if any):
     foreach (module_implements('cron') as $module) {
@@ -5338,10 +5340,13 @@ function drupal_cron_run() {
 }
 
 /**
- * Shutdown function: Performs cron cleanup.
+ * DEPRECATED: Shutdown function: Performs cron cleanup.
  *
- * @see drupal_cron_run()
- * @see drupal_register_shutdown_function()
+ * This function is deprecated because the 'cron_semaphore' variable it
+ * references no longer exists. It is therefore no longer used as a shutdown
+ * function by Drupal core.
+ *
+ * @deprecated
  */
 function drupal_cron_cleanup() {
   // See if the semaphore is still locked.
