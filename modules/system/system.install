@@ -230,8 +230,8 @@ function system_requirements($phase) {
 
   // Test settings.php file writability
   if ($phase == 'runtime') {
-    $conf_dir = drupal_verify_install_file(conf_path(), FILE_NOT_WRITABLE, 'dir');
-    $conf_file = drupal_verify_install_file(conf_path() . '/settings.php', FILE_EXIST|FILE_READABLE|FILE_NOT_WRITABLE);
+    $conf_dir = drupal_verify_install_file(conf_path(), FILE_WRITABLE, 'dir');
+    $conf_file = drupal_verify_install_file(conf_path() . '/settings.php', FILE_EXIST|FILE_READABLE|FILE_WRITABLE);
     if (!$conf_dir || !$conf_file) {
       $requirements['settings.php'] = array(
         'value' => $t('Not protected'),
