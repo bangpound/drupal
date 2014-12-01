@@ -17,13 +17,10 @@
         "ext-SimpleXML": "*",
         "ext-SPL": "*",
         "ext-xml": "*",
-        "bangpound/drupal-bootstrap": "~1.0",
-        "drush/drush": "7.0.*@dev"
+        "bangpound/drupal-bootstrap": "~1.0"
     },
     "bin": [
         "scripts/drupal.sh",
         "scripts/password-hash.sh"
-    ],
-    "scripts": {
-    }
+    ]
 }
