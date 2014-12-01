@@ -17,8 +17,7 @@
         "ext-SimpleXML": "*",
         "ext-SPL": "*",
         "ext-xml": "*",
-        "bangpound/drupal-bootstrap": "~1.0",
-        "drush/drush": "dev-master"
+        "bangpound/drupal-bootstrap": "~1.0"
     },
     "bin": [
         "scripts/drupal.sh",
