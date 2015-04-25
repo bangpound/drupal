@@ -2215,14 +2215,20 @@ function url($path = NULL, array $options = array()) {
     'prefix' => ''
   );
 
+  // A duplicate of the code from url_is_external() to avoid needing another
+  // function call, since performance inside url() is critical.
   if (!isset($options['external'])) {
-    // Return an external link if $path contains an allowed absolute URL. Only
-    // call the slow drupal_strip_dangerous_protocols() if $path contains a ':'
-    // before any / ? or #. Note: we could use url_is_external($path) here, but
-    // that would require another function call, and performance inside url() is
-    // critical.
+    // Return an external link if $path contains an allowed absolute URL. Avoid
+    // calling drupal_strip_dangerous_protocols() if there is any slash (/),
+    // hash (#) or question_mark (?) before the colon (:) occurrence - if any -
+    // as this would clearly mean it is not a URL. If the path starts with 2
+    // slashes then it is always considered an external URL without an explicit
+    // protocol part.
     $colonpos = strpos($path, ':');
-    $options['external'] = ($colonpos !== FALSE && !preg_match('![/?#]!', substr($path, 0, $colonpos)) && drupal_strip_dangerous_protocols($path) == $path);
+    $options['external'] = (strpos($path, '//') === 0)
+      || ($colonpos !== FALSE
+        && !preg_match('![/?#]!', substr($path, 0, $colonpos))
+        && drupal_strip_dangerous_protocols($path) == $path);
   }
 
   // Preserve the original path before altering or aliasing.
@@ -2259,6 +2265,11 @@ function url($path = NULL, array $options = array()) {
     // Reassemble.
     return $path . $options['fragment'];
   }
+
+  // Strip leading slashes from internal paths to prevent them becoming external
+  // URLs without protocol. /example.com should not be turned into
+  // //example.com.
+  $path = ltrim($path, '/');
 
   global $base_url, $base_secure_url, $base_insecure_url;
 
@@ -2337,10 +2348,15 @@ function url($path = NULL, array $options = array()) {
  */
 function url_is_external($path) {
   $colonpos = strpos($path, ':');
-  // Avoid calling drupal_strip_dangerous_protocols() if there is any
-  // slash (/), hash (#) or question_mark (?) before the colon (:)
-  // occurrence - if any - as this would clearly mean it is not a URL.
-  return $colonpos !== FALSE && !preg_match('![/?#]!', substr($path, 0, $colonpos)) && drupal_strip_dangerous_protocols($path) == $path;
+  // Avoid calling drupal_strip_dangerous_protocols() if there is any slash (/),
+  // hash (#) or question_mark (?) before the colon (:) occurrence - if any - as
+  // this would clearly mean it is not a URL. If the path starts with 2 slashes
+  // then it is always considered an external URL without an explicit protocol
+  // part.
+  return (strpos($path, '//') === 0)
+    || ($colonpos !== FALSE
+      && !preg_match('![/?#]!', substr($path, 0, $colonpos))
+      && drupal_strip_dangerous_protocols($path) == $path);
 }
 
 /**
@@ -2637,7 +2653,10 @@ function drupal_deliver_html_page($page_callback_result) {
 
         // Keep old path for reference, and to allow forms to redirect to it.
         if (!isset($_GET['destination'])) {
-          $_GET['destination'] = $_GET['q'];
+          // Make sure that the current path is not interpreted as external URL.
+          if (!url_is_external($_GET['q'])) {
+            $_GET['destination'] = $_GET['q'];
+          }
         }
 
         $path = drupal_get_normal_path(variable_get('site_404', ''));
@@ -2666,7 +2685,10 @@ function drupal_deliver_html_page($page_callback_result) {
 
         // Keep old path for reference, and to allow forms to redirect to it.
         if (!isset($_GET['destination'])) {
-          $_GET['destination'] = $_GET['q'];
+          // Make sure that the current path is not interpreted as external URL.
+          if (!url_is_external($_GET['q'])) {
+            $_GET['destination'] = $_GET['q'];
+          }
         }
 
         $path = drupal_get_normal_path(variable_get('site_403', ''));
@@ -4138,6 +4160,13 @@ function drupal_region_class($region) {
  *       else being the same, JavaScript added by a call to drupal_add_js() that
  *       happened later in the page request gets added to the page after one for
  *       which drupal_add_js() happened earlier in the page request.
+ *   - requires_jquery: Set this to FALSE if the JavaScript you are adding does
+ *     not have a dependency on jQuery. Defaults to TRUE, except for JavaScript
+ *     settings where it defaults to FALSE. This is used on sites that have the
+ *     'javascript_always_use_jquery' variable set to FALSE; on those sites, if
+ *     all the JavaScript added to the page by drupal_add_js() does not have a
+ *     dependency on jQuery, then for improved front-end performance Drupal
+ *     will not add jQuery and related libraries and settings to the page.
  *   - defer: If set to TRUE, the defer attribute is set on the <script>
  *     tag. Defaults to FALSE.
  *   - cache: If set to FALSE, the JavaScript file is loaded anew on every page
@@ -4155,6 +4184,14 @@ function drupal_region_class($region) {
  */
 function drupal_add_js($data = NULL, $options = NULL) {
   $javascript = &drupal_static(__FUNCTION__, array());
+  $jquery_added = &drupal_static(__FUNCTION__ . ':jquery_added', FALSE);
+
+  // If the $javascript variable has been reset with drupal_static_reset(),
+  // jQuery and related files will have been removed from the list, so set the
+  // variable back to FALSE to indicate they have not yet been added.
+  if (empty($javascript)) {
+    $jquery_added = FALSE;
+  }
 
   // Construct the options, taking the defaults into consideration.
   if (isset($options)) {
@@ -4164,6 +4201,9 @@ function drupal_add_js($data = NULL, $options = NULL) {
   }
   else {
     $options = array();
+  }
+  if (isset($options['type']) && $options['type'] == 'setting') {
+    $options += array('requires_jquery' => FALSE);
   }
   $options += drupal_js_defaults($data);
 
@@ -4175,14 +4215,18 @@ function drupal_add_js($data = NULL, $options = NULL) {
   $options['weight'] += count($javascript) / 1000;
 
   if (isset($data)) {
-    // Add jquery.js and drupal.js, as well as the basePath setting, the
-    // first time a JavaScript file is added.
-    if (empty($javascript)) {
+    // Add jquery.js, drupal.js, and related files and settings if they have
+    // not been added yet. However, if the 'javascript_always_use_jquery'
+    // variable is set to FALSE (indicating that the site does not want jQuery
+    // automatically added on all pages) then only add it if a file or setting
+    // that requires jQuery is being added also.
+    if (!$jquery_added && (variable_get('javascript_always_use_jquery', TRUE) || $options['requires_jquery'])) {
+      $jquery_added = TRUE;
       // url() generates the prefix using hook_url_outbound_alter(). Instead of
       // running the hook_url_outbound_alter() again here, extract the prefix
       // from url().
       url('', array('prefix' => &$prefix));
-      $javascript = array(
+      $default_javascript = array(
         'settings' => array(
           'data' => array(
             array('basePath' => base_path()),
@@ -4201,11 +4245,13 @@ function drupal_add_js($data = NULL, $options = NULL) {
           'group' => JS_LIBRARY,
           'every_page' => TRUE,
           'weight' => -1,
+          'requires_jquery' => TRUE,
           'preprocess' => TRUE,
           'cache' => TRUE,
           'defer' => FALSE,
         ),
       );
+      $javascript = drupal_array_merge_deep($javascript, $default_javascript);
       // Register all required libraries.
       drupal_add_library('system', 'jquery', TRUE);
       drupal_add_library('system', 'jquery.once', TRUE);
@@ -4246,6 +4292,7 @@ function drupal_js_defaults($data = NULL) {
     'group' => JS_DEFAULT,
     'every_page' => FALSE,
     'weight' => 0,
+    'requires_jquery' => TRUE,
     'scope' => 'header',
     'cache' => TRUE,
     'defer' => FALSE,
@@ -4292,7 +4339,12 @@ function drupal_get_js($scope = 'header', $javascript = NULL, $skip_alter = FALS
   if (!isset($javascript)) {
     $javascript = drupal_add_js();
   }
-  if (empty($javascript)) {
+
+  // If no JavaScript items have been added, or if the only JavaScript items
+  // that have been added are JavaScript settings (which don't do anything
+  // without any JavaScript code to use them), then no JavaScript code should
+  // be added to the page.
+  if (empty($javascript) || (isset($javascript['settings']) && count($javascript) == 1)) {
     return '';
   }
 
@@ -4446,8 +4498,8 @@ function drupal_get_js($scope = 'header', $javascript = NULL, $skip_alter = FALS
  *
  * Libraries, JavaScript, CSS and other types of custom structures are attached
  * to elements using the #attached property. The #attached property is an
- * associative array, where the keys are the the attachment types and the values
- * are the attached data. For example:
+ * associative array, where the keys are the attachment types and the values are
+ * the attached data. For example:
  * @code
  * $build['#attached'] = array(
  *   'js' => array(drupal_get_path('module', 'taxonomy') . '/taxonomy.js'),
